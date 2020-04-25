@@ -19,24 +19,32 @@ def position_pion(liste): # On parcours la liste pour trouver les positions des 
 
 def can_move(liste,position): # On scann autour des positions des pions pour voir les coups possibles que
     for elem in position:     # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
-        l = elem[0]           # position des pions et comme valeur une des different positions possible que
+        l = elem[0]           # position des pions et comme valeur une liste des different positions possible que
         c = elem[1]           # peut faire ce dernier.
         if c < 8 and len(liste[l][c+1]) < 5 and len(liste[l][c+1]) != 0 : 
-            move[l,c].append([l,c+1])
+            if (len(liste[l][c]) + len(liste[l][c+1])) <= 5 : 
+                move[l,c].append([l,c+1])
         if c > 0 and len(liste[l][c-1]) < 5 and len(liste[l][c-1]) != 0 : 
-            move[l,c].append([l,c-1])
+            if (len(liste[l][c]) + len(liste[l][c-1])) <= 5 :     
+                move[l,c].append([l,c-1])
         if l < 8 and len(liste[l+1][c]) < 5 and len(liste[l+1][c]) != 0 : 
-            move[l,c].append([l+1,c])
+            if (len(liste[l][c]) + len(liste[l+1][c])) <= 5 :     
+                move[l,c].append([l+1,c])
         if l > 0 and len(liste[l-1][c]) < 5 and len(liste[l-1][c]) != 0 : 
-            move[l,c].append([l-1,c])
+            if (len(liste[l][c]) + len(liste[l-1][c])) <= 5 :     
+                move[l,c].append([l-1,c])
         if l > 0  and c > 0 and len(liste[l-1][c-1]) < 5 and len(liste[l-1][c-1]) != 0 : 
-            move[l,c].append([l-1,c-1])
+            if (len(liste[l][c]) + len(liste[l-1][c-1])) <= 5 :     
+                move[l,c].append([l-1,c-1])
         if l > 0 and c < 8 and len(liste[l-1][c+1]) < 5 and len(liste[l-1][c+1]) != 0 : 
-            move[l,c].append([l-1,c+1])
+            if (len(liste[l][c]) + len(liste[l-1][c+1])) <= 5 :     
+                move[l,c].append([l-1,c+1])
         if l < 8 and c > 0  and len(liste[l+1][c-1]) < 5 and len(liste[l+1][c-1]) != 0 : 
-            move[l,c].append([l+1,c-1])   
+            if (len(liste[l][c]) + len(liste[l+1][c-1])) <= 5 :     
+                move[l,c].append([l+1,c-1])   
         if l < 8 and c < 8 and len(liste[l+1][c+1]) < 5 and len(liste[l+1][c+1]) != 0 : 
-            move[l,c].append([l+1,c+1])             
+            if (len(liste[l][c]) + len(liste[l+1][c+1])) <= 5 :     
+                move[l,c].append([l+1,c+1])             
     return(move)
 
 position_pion(liste)
