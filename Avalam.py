@@ -1,8 +1,7 @@
 import cherrypy
 import sys
 import json
-import numpy as np
-import random
+from random import choice
 
 class Server:
    
@@ -17,24 +16,25 @@ class Server:
         cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         if cherrypy.request.method == "OPTIONS":
             return ''     
-        
-    
-    def info_jeu(self):
+        self.IA()
+        return {"move": {"from": self.f ,"to" : self.t},"message": "Ok" }
+
+    def pion_position(self):
+        self.body = cherrypy.request.json
         self.position = []
         self.coup_possible = {}
-        self.body = cherrypy.request.json
-        self.liste = self.body["game"]  # On prend la situation de la partie
+        self.liste = self.body["game"]       # On prend la situation de la partie
         for l in range(9):              # dans une nouvelle liste (position) qui a comme valeur de liste une 
             for c in range(9):          # liste avec les lignes et les colonnes des differentes posisions.
                 if len(self.liste[l][c]) < 5 and len(self.liste[l][c]) != 0:
                     self.position.append([l,c])
                     self.coup_possible[l,c] = []
         return(self.position)
-        
-    def can_move(self):           # On scann autour des positions des pions pour voir les coups possibles que
-        for elem in self.position:# peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
-            l = elem[0]           # position des pions et comme valeur une liste des different positions possible que
-            c = elem[1]           # peut faire ce dernier.
+
+    def can_move(self):                 # On scann autour des positions des pions pour voir les coups possibles que
+        for elem in self.position:      # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
+            l = elem[0]                 # position des pions et comme valeur une liste des different positions possible que
+            c = elem[1]                 # peut faire ce dernier.
             if c < 8 and len(self.liste[l][c+1]) < 5 and len(self.liste[l][c+1]) != 0 : 
                 if (len(self.liste[l][c]) + len(self.liste[l][c+1])) <= 5 : 
                     self.coup_possible[l,c].append([l,c+1])
@@ -60,6 +60,26 @@ class Server:
                 if (len(self.liste[l][c]) + len(self.liste[l+1][c+1])) <= 5 :     
                     self.coup_possible[l,c].append([l+1,c+1])             
         return(self.coup_possible)
+    
+    def joueur(self):
+        if self.body["you"] == self.body["players"][0]:
+            self.moi = 0
+        else : 
+            self.moi = 1
+
+    def info_jeu(self):
+        self.pion_position()
+        self.can_move()
+        self.joueur()
+
+    def IA(self):
+        self.info_jeu()    
+        if len(self.position) != 0 :
+            self.f = choice(self.position)
+        if len(self.coup_possible[tuple(self.f)]) != 0 :
+            self.t = choice(self.coup_possible[tuple(self.f)])
+        return(self.f,self.t)
+
 
     @cherrypy.expose
     def ping(self):

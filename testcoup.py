@@ -1,5 +1,5 @@
 import json 
-import numpy as np
+from random import choice
 
 with open('body.json') as f: # On lis le fichier json 
     info = json.load(f)
@@ -50,4 +50,4 @@ def can_move(liste,position): # On scann autour des positions des pions pour voi
 position_pion(liste)
 can_move(liste,position)
 
-print(move)
+
