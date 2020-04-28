@@ -50,4 +50,22 @@ def can_move(liste,position): # On scann autour des positions des pions pour voi
 position_pion(liste)
 can_move(liste,position)
 
+move_5 = {}
+  
+for elem in position:
+    move_5[tuple(elem)] = []
+    for pos in move[tuple(elem)]:
+        if len(info["game"][elem[0]][elem[1]]) + len(info["game"][pos[0]][pos[1]]) == 5 :
+            move_5[tuple(elem)].append(pos)
+            if info["game"][elem[0]][elem[1]][-1] == 0 and info["game"][pos[0]][pos[1]][-1] != 0  :
+                if len(move_5[tuple(elem)]) > 0:
+                    f = elem
+                    t= choice(move_5[tuple(f)])
+                else : 
+                    if len(position) != 0 :
+                        f = choice(position)
+                    if len(move[tuple(f)]) != 0 :
+                        t = choice(move[tuple(f)])
+                    
 
+print(f,t) 
