@@ -17,6 +17,7 @@ class Server:
         if cherrypy.request.method == "OPTIONS":
             return ''     
         self.IA()
+        print(self.f, self.t)
         return {"move": {"from": self.f ,"to" : self.t},"message": "Ok" }
 
     def pion_position(self):
@@ -66,38 +67,35 @@ class Server:
             self.moi = 0
         else : 
             self.moi = 1
-                
+            
     def info_jeu(self):
         self.pion_position()
         self.can_move()
         self.joueur()
         
-    def IA(self):
-        self.info_jeu() 
-        #BASIC:
+    def five(self):
         self.move_5 = {}   
         for elem in self.coup_possible.keys():
-            self.move_5[tuple(elem)] = []
-            for pos in self.coup_possible[tuple(elem)]:
+            self.move_5[elem] = []
+            for pos in self.coup_possible[elem]:
                 if len(self.body["game"][elem[0]][elem[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 :
-                    self.move_5[tuple(elem)].append(pos)
                     if self.body["game"][elem[0]][elem[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  :
-                        if len(self.move_5[tuple(elem)]) > 0:
-                            self.f = elem
-                            self.t = choice(self.move_5[tuple(self.f)])
-                        else : 
-                            if len(self.position) != 0 :
-                                self.f = choice(self.position)
-                            if len(self.coup_possible[tuple(self.f)]) != 0 :
-                                self.t = choice(self.coup_possible[tuple(self.f)])
-                else : 
-                    if len(self.position) != 0 :
-                        self.f = choice(self.position)
-                    if len(self.coup_possible[tuple(self.f)]) != 0 :
-                        self.t = choice(self.coup_possible[tuple(self.f)])
-                
-        return(self.f,self.t)    
-
+                        self.move_5[tuple(elem)].append(pos)
+    def IA(self):
+        self.info_jeu()
+        self.five()
+        #BASIC: 
+        for elem in self.move_5.keys():
+            if len(self.move_5[tuple(elem)]) > 0:
+                self.f = list(elem)
+                self.t = choice(self.move_5[elem])
+                print(self.f, self.t)
+                break        
+            else:
+                if len(self.position) != 0 :
+                    self.f = choice(self.position)
+                if len(self.coup_possible[tuple(self.f)]) != 0 :
+                    self.t = choice(self.coup_possible[tuple(self.f)])
     @cherrypy.expose
     def ping(self):
         return "pong"

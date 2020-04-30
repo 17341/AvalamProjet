@@ -51,21 +51,38 @@ position_pion(liste)
 can_move(liste,position)
 
 move_5 = {}
-  
-for elem in position:
-    move_5[tuple(elem)] = []
-    for pos in move[tuple(elem)]:
-        if len(info["game"][elem[0]][elem[1]]) + len(info["game"][pos[0]][pos[1]]) == 5 :
-            move_5[tuple(elem)].append(pos)
-            if info["game"][elem[0]][elem[1]][-1] == 0 and info["game"][pos[0]][pos[1]][-1] != 0  :
-                if len(move_5[tuple(elem)]) > 0:
-                    f = elem
-                    t= choice(move_5[tuple(f)])
-                else : 
-                    if len(position) != 0 :
-                        f = choice(position)
-                    if len(move[tuple(f)]) != 0 :
-                        t = choice(move[tuple(f)])
-                    
 
-print(f,t) 
+
+def move5():
+    for pos in move.keys():
+        if len(info["game"][pos[0]][pos[1]]) + len(info["game"][move[(pos)][0][0]][move[(pos)][0][1]]) == 5 :
+            t = pos
+            f = move[(pos)][0]
+            move_5[tuple(f)] = t
+move5()
+print(move_5)   
+
+"""
+def move_5(self):
+        self.move5 = {}
+        self.info_jeu()
+        for pos in self.coup_possible.keys():
+            if len(self.body["game"][pos[0]][pos[1]]) + len(self.body["game"][self.coup_possible[(pos)][0][0]][self.coup_possible[(pos)][0][1]]) == 5 :
+                t = list(pos)
+                f = self.coup_possible[(pos)][0]
+                self.move5[tuple(f)] = t
+            else: 
+                pass 
+        
+for pos in self.coup_possible.keys() :    
+            if len(self.body["game"][pos[0]][pos[1]]) == 4 :
+                self.f = list(pos)
+                if len(self.coup_possible[tuple(pos)]) != 0 :
+                    self.t = choice(self.coup_possible[pos])
+                print(self.f, self.t) 
+            else : 
+                if len(self.position) != 0 :
+                    self.f = choice(self.position)
+                if len(self.coup_possible[tuple(self.f)]) != 0 :
+                        self.t = choice(self.coup_possible[tuple(self.f)])     
+"""               
