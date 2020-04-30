@@ -81,6 +81,7 @@ class Server:
                 if len(self.body["game"][elem[0]][elem[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 :
                     if self.body["game"][elem[0]][elem[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  :
                         self.move_5[tuple(elem)].append(pos)
+    
     def IA(self):
         self.info_jeu()
         self.five()
