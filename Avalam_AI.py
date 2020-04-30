@@ -85,7 +85,7 @@ class Server:
         self.info_jeu()
         self.five()
         #BASIC: 
-        for elem in self.move_5.keys():
+        for elem in self.coup_possible.keys():
             if len(self.move_5[tuple(elem)]) > 0:
                 self.f = list(elem)
                 self.t = choice(self.move_5[elem])
