@@ -1,9 +1,9 @@
 import socket
 import json
-from transmitJSON import recvJSON, sendJSON
+import sys
+from transmitJSON import sendJSON
 
-with open('subinfo.json') as f:
-    msg = json.load(f)
+msg = {'matricules': ['17341', '17367'], 'port': 8000, 'name': 'FrigoFri'}
 
 s = socket.socket()
 s.connect(("localhost",3001))
