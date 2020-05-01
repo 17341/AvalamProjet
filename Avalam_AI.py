@@ -33,9 +33,9 @@ class Server:
         return(self.position)
 
     def can_move(self):                 # On scann autour des positions des pions pour voir les coups possibles que
-        for elem in self.position:      # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
-            l = elem[0]                 # position des pions et comme valeur une liste des different positions possible que
-            c = elem[1]                 # peut faire ce dernier.
+        for f in self.position:      # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
+            l = f[0]                 # position des pions et comme valeur une liste des different positions possible que
+            c = f[1]                 # peut faire ce dernier.
             if c < 8 and len(self.liste[l][c+1]) < 5 and len(self.liste[l][c+1]) != 0 : 
                 if (len(self.liste[l][c]) + len(self.liste[l][c+1])) <= 5 : 
                     self.coup_possible[l,c].append([l,c+1])
@@ -73,25 +73,59 @@ class Server:
         self.can_move()
         self.joueur()
         
-    def five(self):
-        self.move_5 = {}   
-        for elem in self.coup_possible.keys():
-            self.move_5[elem] = []
-            for pos in self.coup_possible[elem]:
-                if len(self.body["game"][elem[0]][elem[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 :
-                    if self.body["game"][elem[0]][elem[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  :
-                        self.move_5[tuple(elem)].append(pos)
+    def tac_five(self):
+        self.five = {}   
+        for f in self.coup_possible.keys():
+            self.five[f] = []
+            for pos in self.coup_possible[f]:
+                if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 :
+                    if self.body["game"][f[0]][f[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  :
+                        self.five[f].append(pos)
+        return(self.five)
     
+    def tac_isolate(self):
+        self.isolate = {}
+        for f in self.coup_possible.keys():
+            self.isolate[f] = []
+            if self.body["game"][f[0]][f[1]][-1] != self.moi:
+                for pos in self.coup_possible[f]:
+                     if self.body["game"][pos[0]][pos[1]][-1] == self.moi:
+                        self.isolate[f].append(pos)
+        return(self.isolate)
+
+    def tac_minpoint(self):
+        self.minpoint = {}
+        for f in self.coup_possible.keys():
+            self.minpoint[f] = []
+            if self.body["game"][f[0]][f[1]][-1] != self.moi:
+                for pos in self.coup_possible[f]:
+                     if self.body["game"][pos[0]][pos[1]][-1] != self.moi:
+                        if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) != 5 :
+                            self.minpoint[f].append(pos)
+        return(self.minpoint)
+        
     def IA(self):
         self.info_jeu()
-        self.five()
-        #BASIC: 
-        for elem in self.coup_possible.keys():
-            if len(self.move_5[tuple(elem)]) > 0:
-                self.f = list(elem)
-                self.t = choice(self.move_5[elem])
+        self.tac_five()
+        self.tac_isolate()
+        self.tac_minpoint()
+        for f in self.coup_possible.keys():
+            #AVEC MES PIONS : 
+            if len(self.isolate[f]) == len(self.coup_possible[f]) and len(self.coup_possible[f]) > 0:
+                self.f = choice(self.coup_possible[f])
+                self.t = list(f)
+                break
+            if len(self.five[f]) > 0:
+                self.f = list(f)
+                self.t = choice(self.five[f])
+                break
+            #AVEC LES PIONS ADVERSAIRE :    
+            if len(self.minpoint[f]) > 0:
+                self.f = choice(self.coup_possible[f])
+                self.t = list(f)
                 print(self.f, self.t)
-                break        
+                break
+            #RANDOM :    
             else:
                 if len(self.position) != 0 :
                     self.f = choice(self.position)

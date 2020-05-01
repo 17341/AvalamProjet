@@ -32,9 +32,9 @@ class Server:
         return(self.position)
 
     def can_move(self):                 # On scann autour des positions des pions pour voir les coups possibles que
-        for elem in self.position:      # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
-            l = elem[0]                 # position des pions et comme valeur une liste des different positions possible que
-            c = elem[1]                 # peut faire ce dernier.
+        for f in self.position:      # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
+            l = f[0]                 # position des pions et comme valeur une liste des different positions possible que
+            c = f[1]                 # peut faire ce dernier.
             if c < 8 and len(self.liste[l][c+1]) < 5 and len(self.liste[l][c+1]) != 0 : 
                 if (len(self.liste[l][c]) + len(self.liste[l][c+1])) <= 5 : 
                     self.coup_possible[l,c].append([l,c+1])

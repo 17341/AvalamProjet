@@ -18,9 +18,9 @@ def position_pion(liste): # On parcours la liste pour trouver les positions des 
     return(position)
 
 def can_move(liste,position): # On scann autour des positions des pions pour voir les coups possibles que
-    for elem in position:     # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
-        l = elem[0]           # position des pions et comme valeur une liste des different positions possible que
-        c = elem[1]           # peut faire ce dernier.
+    for f in position:     # peut faire le pion , on sauvegarde cela dans un dict avec comme clé la 
+        l = f[0]           # position des pions et comme valeur une liste des different positions possible que
+        c = f[1]           # peut faire ce dernier.
         if c < 8 and len(liste[l][c+1]) < 5 and len(liste[l][c+1]) != 0 : 
             if (len(liste[l][c]) + len(liste[l][c+1])) <= 5 : 
                 move[l,c].append([l,c+1])
@@ -60,7 +60,7 @@ def move5():
             f = move[(pos)][0]
             move_5[tuple(f)] = t
 move5()
-print(move_5)   
+   
 
 """
 def move_5(self):
@@ -85,4 +85,37 @@ for pos in self.coup_possible.keys() :
                     self.f = choice(self.position)
                 if len(self.coup_possible[tuple(self.f)]) != 0 :
                         self.t = choice(self.coup_possible[tuple(self.f)])     
-"""               
+            
+isolate = {}
+def isolation():
+    
+    for f in move.keys():
+        isolate[f] = []
+        if info["game"][f[0]][f[1]][-1] != 0:
+            
+            for pos in move[f]:
+                if info["game"][pos[0]][pos[1]][-1] == 0:
+                    isolate[f].append(pos) 
+    return(isolate)
+isolation()
+
+for f in move.keys():
+    if len(isolate[f]) == len(move[f]):
+        f = choice(move[f])
+        t = list(f)
+        print(f, t)
+    else :
+        pass
+"""
+minpoint = {}
+def tac_minpoint():
+    for f in move.keys():
+        minpoint[f] = []
+        if info["game"][f[0]][f[1]][-1] != 0:
+            for pos in move[f]:
+                if info["game"][pos[0]][pos[1]][-1] != 0:
+                    minpoint[f].append(pos)
+    return(minpoint)
+
+tac_minpoint()
+print(minpoint)
