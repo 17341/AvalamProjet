@@ -74,11 +74,13 @@ class Server:
 
     def IA(self):
         self.info_jeu()    
-        if len(self.position) != 0 :
-            self.f = choice(self.position)
-        if len(self.coup_possible[tuple(self.f)]) != 0 :
-            self.t = choice(self.coup_possible[tuple(self.f)])
-        return(self.f,self.t)
+        
+        self.random = {}
+        for f in self.coup_possible.keys():
+            if len(self.coup_possible[f]) > 0:
+                self.random[f] = self.coup_possible[f]
+        self.f = list(choice(list(self.random.keys())))
+        self.t = choice(self.random[tuple(self.f)] )
 
 
     @cherrypy.expose

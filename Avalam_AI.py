@@ -16,12 +16,13 @@ class Server:
         cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         if cherrypy.request.method == "OPTIONS":
             return ''     
+        self.body = cherrypy.request.json
         self.IA()
         print(self.f, self.t)
-        return {"move": {"from": self.f ,"to" : self.t},"message": "Ok" }
+        
+        return {"move": {"from": self.f ,"to" : self.t},"message": self.msg }
 
     def pion_position(self):
-        self.body = cherrypy.request.json
         self.position = []
         self.coup_possible = {}
         self.liste = self.body["game"]       # On prend la situation de la partie
@@ -103,21 +104,23 @@ class Server:
                         if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) != 5 :
                             self.minpoint[f].append(pos)
         return(self.minpoint)
-        
+
     def IA(self):
         self.info_jeu()
-        self.tac_five()
         self.tac_isolate()
+        self.tac_five()
         self.tac_minpoint()
         for f in self.coup_possible.keys():
             #AVEC MES PIONS : 
             if len(self.isolate[f]) == len(self.coup_possible[f]) and len(self.coup_possible[f]) > 0:
                 self.f = choice(self.coup_possible[f])
                 self.t = list(f)
+                print(self.f, self.t)
                 break
             if len(self.five[f]) > 0:
                 self.f = list(f)
                 self.t = choice(self.five[f])
+                print(self.f, self.t)
                 break
             #AVEC LES PIONS ADVERSAIRE :    
             if len(self.minpoint[f]) > 0:
@@ -127,10 +130,15 @@ class Server:
                 break
             #RANDOM :    
             else:
-                if len(self.position) != 0 :
-                    self.f = choice(self.position)
-                if len(self.coup_possible[tuple(self.f)]) != 0 :
-                    self.t = choice(self.coup_possible[tuple(self.f)])
+                self.random = {}
+                for f in self.coup_possible.keys():
+                    if len(self.coup_possible[f]) > 0:
+                        self.random[f] = self.coup_possible[f]
+                msg = ['hmm','ok','ah']
+                self.msg = choice(msg)
+                self.f = list(choice(list(self.random.keys())))
+                self.t = choice(self.random[tuple(self.f)] )
+
     @cherrypy.expose
     def ping(self):
         return "pong"

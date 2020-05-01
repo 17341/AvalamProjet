@@ -49,10 +49,13 @@ def can_move(liste,position): # On scann autour des positions des pions pour voi
 
 position_pion(liste)
 can_move(liste,position)
+print(move)
+print(choice(list(move.keys())))
+print(list(choice(list(move.keys()))))
 
+
+"""
 move_5 = {}
-
-
 def move5():
     for pos in move.keys():
         if len(info["game"][pos[0]][pos[1]]) + len(info["game"][move[(pos)][0][0]][move[(pos)][0][1]]) == 5 :
@@ -62,7 +65,7 @@ def move5():
 move5()
    
 
-"""
+
 def move_5(self):
         self.move5 = {}
         self.info_jeu()
@@ -106,7 +109,7 @@ for f in move.keys():
         print(f, t)
     else :
         pass
-"""
+
 minpoint = {}
 def tac_minpoint():
     for f in move.keys():
@@ -119,3 +122,4 @@ def tac_minpoint():
 
 tac_minpoint()
 print(minpoint)
+"""
