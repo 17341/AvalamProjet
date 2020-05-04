@@ -89,36 +89,44 @@ class Server:
         self.pion_position()
         self.can_move()
         self.joueur()
-        
+
+    ############################################################################
+    #### Completer les cases à 5 pions avec les notres et gagner un point  #####
+    ############################################################################   
     def tac_five(self):
         self.five = {}   
-        for f in self.coup_possible.keys():
+        for f in self.coup_possible.keys():   #On recupère toutes les clès des coups possibles
             self.five[f] = []
-            for pos in self.coup_possible[f]:
-                if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 :
-                    if self.body["game"][f[0]][f[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  :
-                        self.five[f].append(pos)
-        return(self.five)
-    
+            for pos in self.coup_possible[f]:  # On parcours la liste de liste des valeurs de chaque clé 
+                if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) == 5 : # On vérifie si la taille du pion + son coup possible =5
+                    if self.body["game"][f[0]][f[1]][-1] == self.moi and self.body["game"][pos[0]][pos[1]][-1] != self.moi  : #on vérifie si le dernier pion 
+                        self.five[f].append(pos)                                                                              #de la case initiale c'est le notre et celui de la case du coup possible  
+        return(self.five)  #On retourne contenant 5 pions dont le pion au sommet est le notre                                 # est celui de l'adversaire
+
+    ########################################################################################################
+    ###La fonction tac_isolate permet d'isoler les pions de l'adversaire en rajoutant nos pions au dessus###
+    ########################################################################################################
     def tac_isolate(self):
         self.isolate = {}
         for f in self.coup_possible.keys():
             self.isolate[f] = []
-            if self.body["game"][f[0]][f[1]][-1] != self.moi:
-                for pos in self.coup_possible[f]:
-                     if self.body["game"][pos[0]][pos[1]][-1] == self.moi:
-                        self.isolate[f].append(pos)
+            if self.body["game"][f[0]][f[1]][-1] != self.moi: #On vérifie si le dernier pion n'est pas le notre
+                for pos in self.coup_possible[f]:             #On parcourt tous les coups possibles à cette position
+                     if self.body["game"][pos[0]][pos[1]][-1] == self.moi: #On vérifie si le dernier pion du coup posible est le notre 
+                        self.isolate[f].append(pos)           #On rajoute notre pion au dessus de l'adversaire
         return(self.isolate)
-
+    #################################################################################################################
+    ######La fonction tac_minpoint permet de mininiser les pions de l'adversaire tout en maximisant les notres#######
+    #################################################################################################################
     def tac_minpoint(self):
         self.minpoint = {}
         for f in self.coup_possible.keys():
             self.minpoint[f] = []
-            if self.body["game"][f[0]][f[1]][-1] != self.moi:
+            if self.body["game"][f[0]][f[1]][-1] != self.moi:  
                 for pos in self.coup_possible[f]:
-                     if self.body["game"][pos[0]][pos[1]][-1] != self.moi:
-                        if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) != 5 :
-                            self.minpoint[f].append(pos)
+                     if self.body["game"][pos[0]][pos[1]][-1] != self.moi: #On vérifie que le dernier pion du coup possible n'est pas le notre
+                        if len(self.body["game"][f[0]][f[1]]) + len(self.body["game"][pos[0]][pos[1]]) != 5 : #On vérifie que la taille des deux est différente de 5
+                            self.minpoint[f].append(pos) #On empile les pions de l'adversaire entre eux pour diminuer ses points 
         return(self.minpoint)
 #####################################################################################################################
 #####On récupere les données des fonctions précedentes dans notre IA,on parcoure le dictionnaire en récupérant ######
@@ -133,20 +141,23 @@ class Server:
         for f in self.coup_possible.keys():
             #AVEC MES PIONS : 
             if len(self.isolate[f]) == len(self.coup_possible[f]) and len(self.coup_possible[f]) > 0:
-                self.f = choice(self.coup_possible[f])
-                self.t = list(f)
+                self.f = choice(self.coup_possible[f]) #On choisit un coup au hasard dans la liste, position après le coup
+                self.t = list(f)  #position avant le coup
                 print(self.f, self.t)
+                self.msg = "pions isolés :):)"
                 break
             if len(self.five[f]) > 0:
                 self.f = list(f)
                 self.t = choice(self.five[f])
                 print(self.f, self.t)
+                self.msg = "HiHIHIHI + 1 point pour nous :):) "
                 break
             #AVEC LES PIONS DE L'ADVERSAIRE :    
             if len(self.minpoint[f]) > 0:
                 self.f = choice(self.coup_possible[f])
                 self.t = list(f)
                 print(self.f, self.t)
+                self.msg = "AHHHAHH -1 point pour toi"
                 break
             #RANDOM :    
             else:
@@ -154,7 +165,7 @@ class Server:
                 for f in self.coup_possible.keys():
                     if len(self.coup_possible[f]) > 0:
                         self.random[f] = self.coup_possible[f]
-                msg = ['hmm','ok','ah']
+                msg = ['hmm','ok','ahah', "amusant", "tu fais moins le malin"]
                 self.msg = choice(msg)
                 self.f = list(choice(list(self.random.keys())))
                 self.t = choice(self.random[tuple(self.f)] )
