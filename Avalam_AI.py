@@ -141,7 +141,7 @@ class Server:
         for f in self.coup_possible.keys():
             #AVEC MES PIONS : 
             if len(self.isolate[f]) == len(self.coup_possible[f]) and len(self.coup_possible[f]) > 0:
-                self.f = choice(self.coup_possible[f]) #On choisit un coup au hasard dans la liste, position après le coup
+                self.f = choice(self.coup_possible[f]) #On choisit un coup au hasard , position après le coup
                 self.t = list(f)  #position avant le coup
                 print(self.f, self.t)
                 self.msg = "pions isolés :):)"
