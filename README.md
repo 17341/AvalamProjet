@@ -50,6 +50,7 @@ Notre stratégie se résume en trois tactiques dans l'ordre de priorité suivant
 - La tactique-isolate  : Trouver un pion ou une tour ennemie seul (encerclé par nos cases), et l'isoler en mettant un de nos pion au dessus.
 - La tactique-five     : Trouver une case qui peut être potentiellement remplie (5 pions), la remplir en s'assurant que le dernier pion soit le nôtre.
 - La tactique-minpoint : Reduire les pions de l'adversaire en les empilant les uns sur les autres, sauf si ça lui fait une tour de 5 pions.
+- Random : Si aucune des tactiques n'est trouvée, on joue aléatoirement.
 
 
 
