@@ -1,4 +1,6 @@
+import socket
 import json
+import sys
 
 def recvJSON(socket):
 	finished = False
@@ -18,3 +20,9 @@ def sendJSON(socket, data):
 	while total < len(msg):
 		sent = socket.send(msg[total:])
 		total += sent
+
+msg = {'matricules': ['17341', '17367'], 'port': 8000, 'name': 'FrigoFri'}
+
+s = socket.socket()
+s.connect(("localhost",3001))
+sendJSON(s,msg)
