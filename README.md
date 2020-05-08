@@ -5,7 +5,7 @@ Python 3.8.2
 ## Auteurs  
 - Name : FrigoFri
 - Ferekh Khaled : 17341
-- Thierry Joel Moumi : 17367
+- Thierry Joel Tchanteu Moumi : 17367
 - Default Port : 8000
 
 # Installation
@@ -19,7 +19,7 @@ Python 3.8.2
 - Démarrer le serveur du superviseur pour avoir l'interface de jeu :
     - Ouvrir un premier terminal dans le dossier AIGameRunner
     - Taper : python server.py avalam
-- S'enregistrer à la compétition (envoyer un message TCP au port 3001): 
+- S'enregistrer à la compétition (envoyer un message TCP au format json au port 3001): 
     - Ouvrir un deuxième terminal dans le dossier AvalamProjet 
     - Taper : python Subscribe.py 
 - Démarrer le serveur AI :
