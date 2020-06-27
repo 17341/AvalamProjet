@@ -86,10 +86,10 @@ class Avalam_Game:
         for possible in self.coup_possible[pawn]:
             pos2 =  int(possible[0])*(HEIGHT + SPACE)
             pos1 =  int(possible[1])*(WIDTH + SPACE) 
-            pygame.draw.circle(screen,COLORS["BLACK"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+            pygame.draw.circle(screen,COLORS["WHITE"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
 
         return(self.coup_possible)
-    
+a = False   
 while run :
     clock.tick(FPS)
     game = Avalam_Game()
@@ -103,9 +103,12 @@ while run :
             column = pos[0] // (WIDTH + SPACE)
             row = pos[1] // (HEIGHT + SPACE)
             move[row,column].append(1)
-            game.can_move((row,column))
-        
-    pygame.display.flip()
+            a = True
+    if a:
+        game.can_move((row,column))
+
+    pygame.display.flip() 
+    
 
 
  
