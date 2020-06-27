@@ -26,8 +26,8 @@ run = True
 class Avalam_Game():
     def __init__(self):
         pass
-                
-    def draw_pawn():  
+                         
+    def draw_pawn():   
         screen.fill(COLORS["BLACK"])
         for row in BOARD.keys() :
             for column in BOARD[row]: 
