@@ -18,16 +18,19 @@ pygame.display.set_caption("Avalam")
 clock = pygame.time.Clock()
 FPS = 60
 move = {}
+body = [[[] for x in range(9)]for y in range(9)]
 for row in range(9):
     for column in range(9):
         move[row,column] = []
+
 run = True
 
-class Avalam_Game():
+class Avalam_Game:
+    
     def __init__(self):
         pass
-                         
-    def draw_pawn():   
+
+    def draw_board(self):   
         screen.fill(COLORS["BLACK"])
         for row in BOARD.keys() :
             for column in BOARD[row]: 
@@ -35,14 +38,57 @@ class Avalam_Game():
                 pos1 =  int(column)*(WIDTH + SPACE)
                 if int(row) % 2 != 0 and int(column) % 2 == 0 or int(row) % 2 == 0 and int(column) % 2 != 0:
                     pygame.draw.circle(screen,COLORS["RED"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+                    body[int(row)][int(column)] =  [1]
                 else:
                     pygame.draw.circle(screen,COLORS["YELLOW"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
-
+                    body[int(row)][int(column)] = [0]
         pygame.display.update()
 
+    def pawn_position(self):
+        self.position = []
+        self.coup_possible = {}
+        self.liste = body      
+        for l in range(9):              
+            for c in range(9):          
+                if len(self.liste[l][c]) < 5 and len(self.liste[l][c]) != 0:
+                    self.position.append([l,c])
+                    self.coup_possible[l,c] = []
+        return(self.position)
+
+    def can_move(self):                  
+        for f in self.position:      
+            l = f[0]                 
+            c = f[1]           
+            if c < 8 and len(self.liste[l][c+1]) < 5 and len(self.liste[l][c+1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l][c+1])) <= 5 : 
+                    self.coup_possible[l,c].append([l,c+1])
+            if c > 0 and len(self.liste[l][c-1]) < 5 and len(self.liste[l][c-1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l][c-1])) <= 5 :     
+                    self.coup_possible[l,c].append([l,c-1])
+            if l < 8 and len(self.liste[l+1][c]) < 5 and len(self.liste[l+1][c]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l+1][c])) <= 5 :     
+                    self.coup_possible[l,c].append([l+1,c])
+            if l > 0 and len(self.liste[l-1][c]) < 5 and len(self.liste[l-1][c]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l-1][c])) <= 5 :     
+                    self.coup_possible[l,c].append([l-1,c])
+            if l > 0  and c > 0 and len(self.liste[l-1][c-1]) < 5 and len(self.liste[l-1][c-1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l-1][c-1])) <= 5 :     
+                    self.coup_possible[l,c].append([l-1,c-1])
+            if l > 0 and c < 8 and len(self.liste[l-1][c+1]) < 5 and len(self.liste[l-1][c+1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l-1][c+1])) <= 5 :     
+                    self.coup_possible[l,c].append([l-1,c+1])
+            if l < 8 and c > 0  and len(self.liste[l+1][c-1]) < 5 and len(self.liste[l+1][c-1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l+1][c-1])) <= 5 :     
+                    self.coup_possible[l,c].append([l+1,c-1])   
+            if l < 8 and c < 8 and len(self.liste[l+1][c+1]) < 5 and len(self.liste[l+1][c+1]) != 0 : 
+                if (len(self.liste[l][c]) + len(self.liste[l+1][c+1])) <= 5 :     
+                    self.coup_possible[l,c].append([l+1,c+1])           
+        return(self.coup_possible)
+    
 while run :
-    clock.tick(60)
-    Avalam_Game.draw_pawn()
+    clock.tick(FPS)
+    game = Avalam_Game()
+    game.draw_board()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
             run = False  
