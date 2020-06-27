@@ -1,34 +1,48 @@
 import pygame
- 
-pygame.init()
-# Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-YELLOW = (255,255,0)
 
+# Initialisation : 
+pygame.init()
+# Constantes : 
+BOARD = {"0":[6,7],"1":[4,5,6,7],"2":[2,3,4,5,6,7],"3":[0,1,2,3,4,5,6,7],"4":[0,1,2,3,4,5,6,7,8],"5":[1,2,3,4,5,6,7,8],"6":[1,2,3,4,5,6],"7":[1,2,3,4],"8":[2,3]}
+COLORS = {"BLACK" : (0, 0, 0), "WHITE" : (255, 255, 255), "GREEN":(0, 255, 0),"RED" :(255, 0, 0),"YELLOW":(255,255,0)}
 WIDTH = 50
 HEIGHT = 50
-
 SPACE = 10
-
-grid = [[0 for x in range(9)] for y in range(9)]
-move = {}
-for row in range(9) :
-    for column in range(9) : 
-        move[row,column] = []
-
-WINDOW_SIZE = [HEIGHT*len(grid)+(SPACE*(len(grid)+1)),len(grid)*WIDTH+(SPACE*(len(grid)+1))]
+RADIUS = 25
+GRID = [[0 for x in range(9)] for y in range(9)]
+WINDOW_SIZE = [HEIGHT*len(GRID)+(SPACE*(len(GRID)+1)),len(GRID)*WIDTH+(SPACE*(len(GRID)+1))]
+FONT = pygame.font.SysFont('comicsans', 40)
+# Setup : 
 screen = pygame.display.set_mode(WINDOW_SIZE)
-
 pygame.display.set_caption("Avalam")
-
+clock = pygame.time.Clock()
+FPS = 60
+move = {}
+for row in range(9):
+    for column in range(9):
+        move[row,column] = []
 run = True
 
-clock = pygame.time.Clock()
+class Avalam_Game():
+    def __init__(self):
+        pass
+                
+    def draw_pawn():  
+        screen.fill(COLORS["BLACK"])
+        for row in BOARD.keys() :
+            for column in BOARD[row]: 
+                pos2 =  int(row)*(HEIGHT + SPACE)
+                pos1 =  int(column)*(WIDTH + SPACE)
+                if int(row) % 2 != 0 and int(column) % 2 == 0 or int(row) % 2 == 0 and int(column) % 2 != 0:
+                    pygame.draw.circle(screen,COLORS["RED"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+                else:
+                    pygame.draw.circle(screen,COLORS["YELLOW"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+
+        pygame.display.update()
 
 while run :
+    clock.tick(60)
+    Avalam_Game.draw_pawn()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
             run = False  
@@ -37,37 +51,7 @@ while run :
             column = pos[0] // (WIDTH + SPACE)
             row = pos[1] // (HEIGHT + SPACE)
             move[row,column].append(1)
-            print(move)
-            print("Click ", pos, "Grid coordinates: ", row, column)
- 
-    background_image = pygame.image.load("Sans titre.png").convert()
-    screen.blit(background_image, [0,0])
-
-    for row in range(9):
-        for column in range(9):
-            taille = [(SPACE + WIDTH) * column + SPACE,(SPACE + HEIGHT) * row + SPACE,WIDTH,HEIGHT]
-            color = BLACK
-            if row == 0 and column in [6,7]:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 1 and column not in [0,1,2,3,8]:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 2 and column not in [0,1,8]:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 3 and column != 8:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 4 :
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 5 and column !=  0:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 6 and column not in [0,7,8]:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 7 and column not in [0,5,6,7,8]:
-                pygame.draw.rect(screen,color,taille,1)
-            if row == 8 and column in [2,3]:
-                pygame.draw.rect(screen,color,taille,1)
-           
-    clock.tick(60)
-
     pygame.display.flip()
 
-pygame.quit()
+
+ 
