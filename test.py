@@ -55,7 +55,7 @@ class Avalam_Game:
                     self.coup_possible[l,c] = []
         return(self.position)
 
-    def can_move(self):                  
+    def can_move(self,pawn): 
         for f in self.position:      
             l = f[0]                 
             c = f[1]           
@@ -82,13 +82,19 @@ class Avalam_Game:
                     self.coup_possible[l,c].append([l+1,c-1])   
             if l < 8 and c < 8 and len(self.liste[l+1][c+1]) < 5 and len(self.liste[l+1][c+1]) != 0 : 
                 if (len(self.liste[l][c]) + len(self.liste[l+1][c+1])) <= 5 :     
-                    self.coup_possible[l,c].append([l+1,c+1])           
+                    self.coup_possible[l,c].append([l+1,c+1])
+        for possible in self.coup_possible[pawn]:
+            pos2 =  int(possible[0])*(HEIGHT + SPACE)
+            pos1 =  int(possible[1])*(WIDTH + SPACE) 
+            pygame.draw.circle(screen,COLORS["BLACK"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+
         return(self.coup_possible)
     
 while run :
     clock.tick(FPS)
     game = Avalam_Game()
     game.draw_board()
+    game.pawn_position()
     for event in pygame.event.get():  
         if event.type == pygame.QUIT:  
             run = False  
@@ -97,6 +103,8 @@ while run :
             column = pos[0] // (WIDTH + SPACE)
             row = pos[1] // (HEIGHT + SPACE)
             move[row,column].append(1)
+            game.can_move((row,column))
+        
     pygame.display.flip()
 
 
