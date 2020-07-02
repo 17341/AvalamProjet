@@ -1,46 +1,47 @@
 import pygame
+import time 
 
-# Initialisation : 
-pygame.init()
-# Constantes : 
-BOARD = {"0":[6,7],"1":[4,5,6,7],"2":[2,3,4,5,6,7],"3":[0,1,2,3,4,5,6,7],"4":[0,1,2,3,4,5,6,7,8],"5":[1,2,3,4,5,6,7,8],"6":[1,2,3,4,5,6],"7":[1,2,3,4],"8":[2,3]}
+# Global constants : 
+BOARD ={"0":[6,7],
+        "1":[4,5,6,7],
+        "2":[2,3,4,5,6,7],
+        "3":[0,1,2,3,4,5,6,7],
+        "4":[0,1,2,3,4,5,6,7,8],
+        "5":[1,2,3,4,5,6,7,8],
+        "6":[1,2,3,4,5,6],
+        "7":[1,2,3,4],
+        "8":[2,3]}
 COLORS = {"BLACK" : (0, 0, 0), "WHITE" : (255, 255, 255), "GREEN":(0, 255, 0),"RED" :(255, 0, 0),"YELLOW":(255,255,0)}
-WIDTH = 50
-HEIGHT = 50
-SPACE = 10
-RADIUS = 25
+CASE_WIDTH = 50
+CASE_HEIGHT = 50
+CASE_SPACE = 10
+PAWN_RADIUS = 25
 GRID = [[0 for x in range(9)] for y in range(9)]
-WINDOW_SIZE = [HEIGHT*len(GRID)+(SPACE*(len(GRID)+1)),len(GRID)*WIDTH+(SPACE*(len(GRID)+1))]
-FONT = pygame.font.SysFont('comicsans', 40)
-# Setup : 
-screen = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption("Avalam")
-clock = pygame.time.Clock()
-FPS = 60
-move = {}
+moves = {}
 body = [[[] for x in range(9)]for y in range(9)]
 for row in range(9):
     for column in range(9):
-        move[row,column] = []
-
-run = True
+        moves[row,column] = []
+WINDOW_SIZE = [CASE_HEIGHT*len(GRID)+(CASE_SPACE*(len(GRID)+1)),len(GRID)*CASE_WIDTH+(CASE_SPACE*(len(GRID)+1))]
+screen = pygame.display.set_mode(WINDOW_SIZE)
 
 class Avalam_Game:
-    
-    def __init__(self):
+
+    def __init__(self,BOARD):
+        self.BOARD = BOARD
+    def reset_game(self): 
         pass
 
-    def draw_board(self):   
-        screen.fill(COLORS["BLACK"])
-        for row in BOARD.keys() :
-            for column in BOARD[row]: 
-                pos2 =  int(row)*(HEIGHT + SPACE)
-                pos1 =  int(column)*(WIDTH + SPACE)
+    def draw_BOARD(self):   
+        for row in self.BOARD.keys() :
+            for column in self.BOARD[row]: 
+                pos2 =  int(row)*(CASE_HEIGHT + CASE_SPACE)
+                pos1 =  int(column)*(CASE_WIDTH + CASE_SPACE)
                 if int(row) % 2 != 0 and int(column) % 2 == 0 or int(row) % 2 == 0 and int(column) % 2 != 0:
-                    pygame.draw.circle(screen,COLORS["RED"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+                    pygame.draw.circle(screen,COLORS["RED"],(pos1+(int(PAWN_RADIUS+CASE_SPACE)),pos2+(int(PAWN_RADIUS+CASE_SPACE))), int(PAWN_RADIUS), int(PAWN_RADIUS))
                     body[int(row)][int(column)] =  [1]
                 else:
-                    pygame.draw.circle(screen,COLORS["YELLOW"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+                    pygame.draw.circle(screen,COLORS["YELLOW"],(pos1+(int(PAWN_RADIUS+CASE_SPACE)),pos2+(int(PAWN_RADIUS+CASE_SPACE))), int(PAWN_RADIUS), int(PAWN_RADIUS))
                     body[int(row)][int(column)] = [0]
         pygame.display.update()
 
@@ -84,31 +85,53 @@ class Avalam_Game:
                 if (len(self.liste[l][c]) + len(self.liste[l+1][c+1])) <= 5 :     
                     self.coup_possible[l,c].append([l+1,c+1])
         for possible in self.coup_possible[pawn]:
-            pos2 =  int(possible[0])*(HEIGHT + SPACE)
-            pos1 =  int(possible[1])*(WIDTH + SPACE) 
-            pygame.draw.circle(screen,COLORS["WHITE"],(pos1+(int(RADIUS+SPACE)),pos2+(int(RADIUS+SPACE))), int(RADIUS), int(RADIUS))
+            pos2 =  int(possible[0])*(CASE_HEIGHT + CASE_SPACE)
+            pos1 =  int(possible[1])*(CASE_WIDTH + CASE_SPACE) 
+            pygame.draw.circle(screen,COLORS["WHITE"],(pos1+(int(PAWN_RADIUS+CASE_SPACE)),pos2+(int(PAWN_RADIUS+CASE_SPACE ))), int(PAWN_RADIUS), int(PAWN_RADIUS))
 
         return(self.coup_possible)
-a = False   
-while run :
-    clock.tick(FPS)
-    game = Avalam_Game()
-    game.draw_board()
-    game.pawn_position()
-    for event in pygame.event.get():  
-        if event.type == pygame.QUIT:  
-            run = False  
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            column = pos[0] // (WIDTH + SPACE)
-            row = pos[1] // (HEIGHT + SPACE)
-            move[row,column].append(1)
-            a = True
-    if a:
-        game.can_move((row,column))
 
-    pygame.display.flip() 
-    
+    def move(self,initial,final):
+        for value in self.BOARD[str(row)]:
+            if value == column :
+                self.BOARD[str(row)].remove(value)
+        pygame.draw.circle(screen,COLORS["WHITE"],final,final, int(PAWN_RADIUS), int(PAWN_RADIUS))
 
 
+def main():
+    pygame.init()
+    WINDOW_SIZE = [CASE_HEIGHT*len(GRID)+(CASE_SPACE*(len(GRID)+1)),len(GRID)*CASE_WIDTH+(CASE_SPACE*(len(GRID)+1))]
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+    pygame.display.set_caption("Avalam")
+    clock = pygame.time.Clock()
+    FPS = 60
+    a = False 
+    run = True 
+    while run :
+        screen.fill(COLORS["BLACK"])
+        clock.tick(FPS)
+        game = Avalam_Game(BOARD)
+        game.draw_BOARD()
+        game.pawn_position()
+        for event in pygame.event.get():  
+            if event.type == pygame.QUIT:  
+                run = False  
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                column = pos[0] // (CASE_WIDTH + CASE_SPACE)
+                row = pos[1] // (CASE_HEIGHT + CASE_SPACE)
+                moves[row,column].append(1)
+                a = True
+                
+        if a:
+            game.can_move((row,column))
+            for value in BOARD[str(row)]:
+                if value == column :
+                    BOARD[str(row)].remove(value)
+            
+            
+        pygame.display.flip() 
+        
+if __name__ == "__main__":
+    main()
  
