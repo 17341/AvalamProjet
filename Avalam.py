@@ -1,6 +1,6 @@
 import pygame
 import time 
-
+# Constantes :
 BOARD={"0":[6,7],
         "1":[4,5,6,7],
         "2":[2,3,4,5,6,7],
@@ -18,12 +18,14 @@ COLORS={"BLACK" : (0, 0, 0),
         "WHITE" : (255, 255, 255),
         "GREEN":(0, 255, 0),
         "RED" :(255, 0, 0),
-        "YELLOW":(255,255,0)}
+        "YELLOW":(255,255,0),
+        "BLUE":(0,0,255)}
+board_color = {}
 
 class Avalam_Game:
 
     def __init__(self):
-        # Constantes :
+        self.board_color = board_color
         self.BOARD=BOARD
         self.CASE_WIDTH = CASE_WIDTH
         self.CASE_HEIGHT = CASE_HEIGHT 
@@ -34,26 +36,31 @@ class Avalam_Game:
         self.screen = pygame.display.set_mode(self.WINDOW_SIZE)
         self.moves = {}
         self.body = [[[] for x in range(9)]for y in range(9)]
-        
-    def draw_board(self):
-        self.screen.fill(COLORS["BLACK"])
-        pygame.display.set_caption("Avalam")
+        self.joueur = 0
         for row in self.BOARD.keys() :
             for column in self.BOARD[row]: 
-                row_pos =  int(row)*(self.CASE_HEIGHT + self.CASE_SPACE)
-                col_pos =  int(column)*(self.CASE_WIDTH + self.CASE_SPACE)
                 if int(row) % 2 != 0 and int(column) % 2 == 0 or int(row) % 2 == 0 and int(column) % 2 != 0:
-                    pygame.draw.circle(self.screen,COLORS["RED"],(col_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE)),row_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE))), int(self.PAWN_RADIUS), int(self.PAWN_RADIUS))
                     self.body[int(row)][int(column)] =  [1]
+                    self.board_color[(int(row),column)] = ["RED"]
                 else:
-                    pygame.draw.circle(self.screen,COLORS["YELLOW"],(col_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE)),row_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE))), int(self.PAWN_RADIUS), int(self.PAWN_RADIUS))
                     self.body[int(row)][int(column)] = [0]
-        pygame.display.update()
+                    self.board_color[(int(row),column)] = ["YELLOW"]
+                
+    def draw_board(self):
+        self.possible_moves()
+        self.screen.fill(COLORS["BLACK"])
+        pygame.display.set_caption("Avalam")
+        for pos in self.board_color.keys():
+            row_pos =  int(pos[0])*(self.CASE_HEIGHT + self.CASE_SPACE)
+            col_pos =  int(pos[1])*(self.CASE_WIDTH + self.CASE_SPACE)
+            pygame.draw.circle(self.screen,COLORS[self.board_color[pos][-1]],(col_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE)),row_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE))), int(self.PAWN_RADIUS), int(self.PAWN_RADIUS))
+            num = len(self.body[pos[0]][pos[1]])
+            self.draw_txt(num,col_pos+self.PAWN_RADIUS,row_pos+self.PAWN_RADIUS-5,COLORS["BLUE"])
         return(self.BOARD)
 
     def pawn_position(self):
         self.position = []
-        self.coup_possible = {}     
+        self.coup_possible = {}    
         for l in range(9):              
             for c in range(9):          
                 if len(self.body[l][c]) < 5 and len(self.body[l][c]) != 0:
@@ -92,14 +99,43 @@ class Avalam_Game:
                     self.coup_possible[l,c].append([l+1,c+1])
         return(self.coup_possible)
 
-    def show_moves(self,row,column):
-        self.possible_moves()
-        self.draw_board()
-        for possible in self.coup_possible[(row,column)]:
-            pos2 =  int(possible[0])*(self.CASE_HEIGHT + self.CASE_SPACE)
-            pos1 =  int(possible[1])*(self.CASE_WIDTH + self.CASE_SPACE) 
-            pygame.draw.circle(self.screen,COLORS["WHITE"],(pos1+(int(self.PAWN_RADIUS+self.CASE_SPACE)),pos2+(int(self.PAWN_RADIUS+self.CASE_SPACE ))), int(self.PAWN_RADIUS), int(self.PAWN_RADIUS))
-          
+    def show_move(self,position):
+        try :
+            for possible in self.coup_possible[position]:
+                pos2 =  int(possible[0])*(self.CASE_HEIGHT + self.CASE_SPACE)
+                pos1 =  int(possible[1])*(self.CASE_WIDTH + self.CASE_SPACE) 
+                pygame.draw.circle(self.screen,COLORS["WHITE"],(pos1+(int(self.PAWN_RADIUS+self.CASE_SPACE)),pos2+(int(self.PAWN_RADIUS+self.CASE_SPACE))),int(self.PAWN_RADIUS),int(self.PAWN_RADIUS))
+        except:
+            print("Cette tour est remplie ! ")
+
+    def make_move(self,initial_position,final_position):
+        try : 
+            if list(final_position) in self.coup_possible[initial_position] : 
+                self.body[final_position[0]][final_position[1]] += self.body[initial_position[0]][initial_position[1]]
+                self.body[initial_position[0]][initial_position[1]].clear()
+                #Remove pawn from board : 
+                for value in self.BOARD[str(initial_position[0])]:
+                    if value == initial_position[1] :
+                        self.BOARD[str(initial_position[0])].remove(value)
+                #Remove color from pawn :
+                for value in self.board_color.keys():
+                    if  initial_position == value :
+                        initial_color = self.board_color[value]
+                        self.board_color[final_position] = initial_color
+                        del self.board_color[value]
+                        break
+            else:
+                print("Not possible")   
+        except: 
+            print("Not possible")   
+        
+        pygame.display.update()
+   
+    def draw_txt(self,txt,x,y,color,size = 50):
+        Letter_font = pygame.font.SysFont('comicsans',size)
+        text = Letter_font.render(str(txt),1,color)
+        self.screen.blit(text,(x,y))
+
 def main():
     pygame.init()
     run = True
@@ -107,31 +143,35 @@ def main():
     clock = pygame.time.Clock()
     FPS = 60
     show = 0
+    i = 0
     game.draw_board()
     while run :
-        pos = pygame.mouse.get_pos()
         clock.tick(FPS)
         while show%2 != 0 :
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  
                     run = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    final_pos = pygame.mouse.get_pos()
-                    final_column = final_pos[0] // (CASE_WIDTH + CASE_SPACE)
-                    final_row = final_pos[1] // (CASE_HEIGHT + CASE_SPACE)
-                    print("To : ",(final_row, final_column))
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    final_position = pygame.mouse.get_pos()
+                    final_column = final_position[0] // (CASE_WIDTH + CASE_SPACE)
+                    final_row = final_position[1] // (CASE_HEIGHT + CASE_SPACE)
+                    game.make_move((initial_row,initial_column),(final_row, final_column))
+                    game.draw_board()
+                    print(game.possible_moves())
                     show += 1 
-                    
         for event in pygame.event.get():  
             if event.type == pygame.QUIT:  
                 run = False  
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                initial_pos = pygame.mouse.get_pos()
-                initial_column = initial_pos[0] // (CASE_WIDTH + CASE_SPACE)
-                initial_row = initial_pos[1] // (CASE_HEIGHT + CASE_SPACE)
-                game.show_moves(initial_row,initial_column)
-                print("From : ",(initial_row,initial_column))               
-                show += 1
+                initial_position = pygame.mouse.get_pos()
+                initial_column = initial_position[0] // (CASE_WIDTH + CASE_SPACE)
+                initial_row =initial_position[1] // (CASE_HEIGHT + CASE_SPACE)
+                if str(initial_row) in BOARD.keys() and initial_column in BOARD[str(initial_row)]:
+                    game.show_move((initial_row,initial_column))
+                    i+=1   
+                    show += 1
+                else :
+                    print("No pawn here!")
     
         pygame.display.flip() 
 
