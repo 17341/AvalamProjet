@@ -55,7 +55,7 @@ class Avalam_Game:
             col_pos =  int(pos[1])*(self.CASE_WIDTH + self.CASE_SPACE)
             pygame.draw.circle(self.screen,COLORS[self.board_color[pos][-1]],(col_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE)),row_pos+(int(self.PAWN_RADIUS+self.CASE_SPACE))), int(self.PAWN_RADIUS), int(self.PAWN_RADIUS))
             num = len(self.body[pos[0]][pos[1]])
-            self.draw_txt(num,col_pos+self.PAWN_RADIUS,row_pos+self.PAWN_RADIUS-5,COLORS["BLUE"])
+            self.add_txt(num,col_pos+self.PAWN_RADIUS,row_pos+self.PAWN_RADIUS-5,COLORS["BLUE"])
         return(self.BOARD)
 
     def pawn_position(self):
@@ -131,15 +131,41 @@ class Avalam_Game:
         
         pygame.display.update()
    
-    def draw_txt(self,txt,x,y,color,size = 50):
+    def add_txt(self,txt,x,y,color,size = 50):
         Letter_font = pygame.font.SysFont('comicsans',size)
         text = Letter_font.render(str(txt),1,color)
         self.screen.blit(text,(x,y))
+        pygame.display.update()  
+    def add_image(self,image):
+        img= pygame.image.load(image) 
+        self.screen.blit(img,(0,0))
+        pygame.display.update()  
+    def end(self):
+        self.possible_moves()
+        n = 0
+        for elem in self.coup_possible.values() :
+            n +=len(elem)
+        print(n)   
+        if n == 0 :
+            print('Fini')
+        
+game = Avalam_Game()
 
+def menu():
+    pygame.display.set_caption("Avalam Menu")
+    game.add_image("Menu.png")
+    run = True
+    while run :
+        mouse_pos = pygame.mouse.get_pos() 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  
+                run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and mouse_pos != (20,20):
+                main()
+                    
 def main():
     pygame.init()
     run = True
-    game = Avalam_Game()
     clock = pygame.time.Clock()
     FPS = 60
     show = 0
@@ -150,18 +176,18 @@ def main():
         while show%2 != 0 :
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  
-                    run = False
+                    quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     final_position = pygame.mouse.get_pos()
                     final_column = final_position[0] // (CASE_WIDTH + CASE_SPACE)
                     final_row = final_position[1] // (CASE_HEIGHT + CASE_SPACE)
                     game.make_move((initial_row,initial_column),(final_row, final_column))
                     game.draw_board()
-                    print(game.possible_moves())
+                    game.end()
                     show += 1 
         for event in pygame.event.get():  
             if event.type == pygame.QUIT:  
-                run = False  
+                quit()  
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 initial_position = pygame.mouse.get_pos()
                 initial_column = initial_position[0] // (CASE_WIDTH + CASE_SPACE)
@@ -172,9 +198,8 @@ def main():
                     show += 1
                 else :
                     print("No pawn here!")
-    
         pygame.display.flip() 
 
 if __name__ == "__main__":
-    main()
+    menu()
  

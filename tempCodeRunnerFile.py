@@ -1,1 +1,1 @@
-ame.possible_moves()
+game = Avalam_Game()
