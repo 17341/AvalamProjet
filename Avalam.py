@@ -323,19 +323,26 @@ def main():
                         final_position = pygame.mouse.get_pos()
                         final_column = final_position[0] // (CASE_WIDTH + CASE_SPACE)
                         final_row = final_position[1] // (CASE_HEIGHT + CASE_SPACE)
+                        
                         if [final_row,final_column] in game.coup_possible[(initial_row,initial_column)]:
                             game.make_move((initial_row,initial_column),(final_row, final_column))
                             game.draw_board()
                             game.score()
                             game.end()
                             show += 1 
+
                         elif(initial_row,initial_column) == (final_row,final_column) :
                             print("Pas possible")
+                            game.draw_board()
+                            game.score()
+                            show -=1
+                            
                         else :
                             print("Retry")
                             game.draw_board()
                             game.score()
-                            show -=1
+                            show -=1     
+                           
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:  
                     quit()  
@@ -343,11 +350,16 @@ def main():
                     initial_position = pygame.mouse.get_pos()
                     initial_column = initial_position[0] // (CASE_WIDTH + CASE_SPACE)
                     initial_row =initial_position[1] // (CASE_HEIGHT + CASE_SPACE)
-                    if str(initial_row) in BOARD.keys() and initial_column in BOARD[str(initial_row)]:
+                    if (len(game.body[initial_row][initial_column]) == 5) : 
+                        print("Remplie")
+                        break
+                    elif str(initial_row) in BOARD.keys() and initial_column in BOARD[str(initial_row)]:
                         game.show_move((initial_row,initial_column))
                         show += 1
                     else :
                         game.problem_messages.append("No pawn here !")
+                        print("No pawn here !")
+                        
         else :
             ia.move()
             initial_position = ia.f
