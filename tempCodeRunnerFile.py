@@ -1,1 +1,1 @@
-game = Avalam_Game()
+game.status()
